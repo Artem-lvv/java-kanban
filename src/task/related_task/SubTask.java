@@ -5,8 +5,8 @@ import task.TaskStatus;
 
 public class SubTask extends Task {
     private Epic epicTask;
-    public SubTask(String name, String description, TaskStatus status, Epic epic) {
+    public SubTask(String name, String description, TaskStatus status, Epic epicTask) {
         super(name, description, status);
-        epicTask = epic;
+        this.epicTask = epicTask;
     }
 }

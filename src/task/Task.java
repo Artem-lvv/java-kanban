@@ -5,13 +5,13 @@ import java.util.Objects;
 public class Task {
     private String name;
     private String description;
-    private int id;
+    private Integer id;
     private TaskStatus status;
 
     public Task(String name, String description, TaskStatus status) {
         this.name = name;
         this.description = description;
-        this.id++;
+        this.id =+ 1;
         this.status = status;
     }
 
@@ -35,10 +35,6 @@ public class Task {
         return id;
     }
 
-    public void setID(int id) {
-        this.id = id;
-    }
-
     public TaskStatus getStatus() {
         return status;
     }
@@ -52,7 +48,7 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        return id == task.id;
+        return Objects.equals(id, task.id);
     }
 
     @Override
