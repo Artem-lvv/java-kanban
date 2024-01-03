@@ -1,18 +1,20 @@
 package task;
 
+import service.Service;
+
 import java.util.Objects;
 
 public class Task {
-    private String name;
-    private String description;
-    private Integer id;
-    private TaskStatus status;
+    protected String name;
+    protected String description;
+    protected Integer id;
+    protected TaskStatus status;
 
-    public Task(String name, String description, TaskStatus status) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.id =+ 1;
-        this.status = status;
+        this.id = Service.generatedID();
+        this.status = TaskStatus.NEW;
     }
 
     public String getName() {
@@ -31,7 +33,7 @@ public class Task {
         this.description = description;
     }
 
-    public int getID() {
+    public Integer getID() {
         return id;
     }
 
@@ -54,5 +56,15 @@ public class Task {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status +
+                '}';
     }
 }
