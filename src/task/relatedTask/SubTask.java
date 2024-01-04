@@ -3,7 +3,7 @@ package task.relatedTask;
 import task.Task;
 
 public class SubTask extends Task {
-    private EpicTask relatedEpicTask;
+    private final EpicTask relatedEpicTask;
 
     public SubTask(String name, String description, EpicTask epicTask) {
         super(name, description);

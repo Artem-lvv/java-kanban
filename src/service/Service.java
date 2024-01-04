@@ -1,7 +1,7 @@
 package service;
 
 public final class Service {
-    private static Integer counterTaskID = 0;
+    private static Integer counterTaskID = 1;
 
     private Service() {
     }

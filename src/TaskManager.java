@@ -105,9 +105,9 @@ public class TaskManager {
 
     private void checkAndUpdateEpicTaskStatus(SubTask subTask) {
         EpicTask epicTask = subTask.getRelatedEpicTask();
-        Map<Integer, SubTask> subTasks = epicTask.getSubTasks();
+        Map<Integer, SubTask> subTasksEpic = epicTask.getSubTasks();
 
-        if (subTasks.isEmpty()) {
+        if (subTasksEpic.isEmpty()) {
             epicTask.setStatus(TaskStatus.NEW);
             return;
         }
@@ -116,7 +116,7 @@ public class TaskManager {
         int countSubTaskDONE = 0;
 
 
-        for (SubTask elemSubTask : subTasks.values()) {
+        for (SubTask elemSubTask : subTasksEpic.values()) {
             if (elemSubTask.getStatus() == TaskStatus.NEW) {
                 countSubTaskNEW++;
             } else if (elemSubTask.getStatus() == TaskStatus.DONE) {
@@ -124,9 +124,9 @@ public class TaskManager {
             }
         }
 
-        if (subTasks.size() == countSubTaskNEW) {
+        if (subTasksEpic.size() == countSubTaskNEW) {
             epicTask.setStatus(TaskStatus.NEW);
-        } else if (subTasks.size() == countSubTaskDONE) {
+        } else if (subTasksEpic.size() == countSubTaskDONE) {
             epicTask.setStatus(TaskStatus.DONE);
         } else {
             epicTask.setStatus(TaskStatus.IN_PROGRESS);
@@ -144,7 +144,7 @@ public class TaskManager {
             case SUBTASK:
                 SubTask subTask = (SubTask) getSubTaskByID(id);
                 subTask.getRelatedEpicTask().deleteSubTaskToID(id); // delete related tasks
-
+                checkAndUpdateEpicTaskStatus(subTask);
                 subTasks.remove(id);
                 break;
             default:
