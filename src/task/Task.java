@@ -1,10 +1,9 @@
 package task;
 
-import service.Service;
-
 import java.util.Objects;
 
 public class Task {
+    private static Integer counterTaskID = 1;
     protected String name;
     protected String description;
     protected Integer id;
@@ -13,7 +12,7 @@ public class Task {
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.id = Service.generatedID();
+        this.id = counterTaskID++;
         this.status = TaskStatus.NEW;
     }
 

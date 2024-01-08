@@ -10,7 +10,7 @@ public class Main {
         System.out.println("Поехали!");
 
         // debug
-        TaskManager tm = TaskManager.getTaskManager();
+        TaskManager tm = new TaskManager();
 
         EpicTask epicOne = new EpicTask("Epic test 1", "Описание Epic test 1");
         SubTask subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicOne);
@@ -34,6 +34,16 @@ public class Main {
         tm.deleteTaskByTypeAndID(TypeTask.SUBTASK, 3);
         System.out.println(tm.getListEpicTasks());
 
+        EpicTask epicTwo = new EpicTask("Epic test 2", "Описание Epic test 2");
+        SubTask subTaskThree = new SubTask("SubTask test 3", "Описание SubTask test 3", epicTwo);
+        epicTwo.addSubTask(subTaskThree);
+
+        tm.addEpicTask(epicTwo);
+        tm.addSubTask(subTaskThree);
+
+        tm.deleteTaskByTypeAndID(TypeTask.EPIC, epicTwo.getID());
+
+
         Task taskOne = new Task("Task test 1", "Описание Task test 1");
         Task taskTwo = new Task("Task test 2", "Описание Task test 2");
         tm.addTask(taskOne);
@@ -42,7 +52,6 @@ public class Main {
         System.out.println(tm.getListTasks());
         System.out.println(tm.getListEpicTasks());
         System.out.println(tm.getListSubTasks());
-
 
     }
 }
