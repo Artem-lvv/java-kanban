@@ -3,21 +3,21 @@ package task.relatedTask;
 import task.Task;
 
 public class SubTask extends Task {
-    private final EpicTask relatedEpicTask;
+    private final Integer relatedEpicTaskID;
 
     public SubTask(String name, String description, EpicTask epicTask) {
         super(name, description);
-        this.relatedEpicTask = epicTask;
+        this.relatedEpicTaskID = epicTask.getID();
     }
 
-    public EpicTask getRelatedEpicTask() {
-        return relatedEpicTask;
+    public Integer getRelatedEpicTaskID() {
+        return relatedEpicTaskID;
     }
 
     @Override
     public String toString() {
         return "SubTask{" +
-                "relatedEpicTask=" + relatedEpicTask +
+                "relatedEpicTaskID=" + relatedEpicTaskID +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", id=" + id +

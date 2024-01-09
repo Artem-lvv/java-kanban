@@ -4,12 +4,21 @@ import task.TypeTask;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 
 public class TaskManager {
-    private final HashMap<Integer, Task> tasks = new HashMap<>();
-    private final HashMap<Integer, EpicTask> epicTasks = new HashMap<>();
-    private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
+    private final HashMap<Integer, Task> tasks;
+    private final HashMap<Integer, EpicTask> epicTasks;
+    private final HashMap<Integer, SubTask> subTasks;
+
+    public TaskManager() {
+        tasks = new HashMap<>();
+        epicTasks = new HashMap<>();
+        subTasks = new HashMap<>();
+    }
 
     public List<Task> getListTasks() {
         return new ArrayList<>(tasks.values());
@@ -29,8 +38,11 @@ public class TaskManager {
                 tasks.clear();
                 break;
             case EPIC:
-            case SUBTASK:
                 epicTasks.clear();
+                subTasks.clear();
+                break;
+            case SUBTASK:
+                epicTasks.forEach((id, epicTask) -> epicTask.deleteAllSubTasksID());
                 subTasks.clear();
                 break;
             default:
@@ -65,7 +77,6 @@ public class TaskManager {
     public void addSubTask(SubTask subTask) {
         if (subTask != null && !subTasks.containsKey(subTask.getID())) {
             subTasks.put(subTask.getID(), subTask);
-            checkAndUpdateEpicTaskStatus(subTask);
         }
     }
 
@@ -83,7 +94,8 @@ public class TaskManager {
             case SUBTASK:
                 subTasks.put(task.getID(), (SubTask) task);
 
-                ((SubTask) task).getRelatedEpicTask().addSubTask((SubTask) task); // updating related tasks
+                EpicTask epicTask = getEpicTaskByID((((SubTask) task).getRelatedEpicTaskID()));
+                epicTask.addSubTask((SubTask) task); // updating related tasks
                 checkAndUpdateEpicTaskStatus((SubTask) task);
                 break;
             default:
@@ -99,16 +111,16 @@ public class TaskManager {
             case EPIC:
                 // delete related SubTasks
                 EpicTask epicTask = getEpicTaskByID(id);
-                Map<Integer, SubTask> subTasksEpicTask = epicTask.getSubTasks();
-                subTasksEpicTask.forEach((subTaskID, subTask) -> subTasks.remove(subTaskID));
-                subTasksEpicTask.clear();
+                List<Integer> subTasksIdEpicTask = epicTask.getSubTasksID();
+                subTasksIdEpicTask.forEach(subTasks::remove);
 
                 epicTasks.remove(id);
                 break;
             case SUBTASK:
                 // delete related tasks
                 SubTask subTask = getSubTaskByID(id);
-                subTask.getRelatedEpicTask().deleteSubTaskToID(id);
+                EpicTask epicTaskByID = getEpicTaskByID(subTask.getRelatedEpicTaskID());
+                epicTaskByID.deleteSubTaskToID(id);
 
                 checkAndUpdateEpicTaskStatus(subTask);
                 subTasks.remove(id);
@@ -119,10 +131,10 @@ public class TaskManager {
     }
 
     private void checkAndUpdateEpicTaskStatus(SubTask subTask) {
-        EpicTask epicTask = subTask.getRelatedEpicTask();
-        Map<Integer, SubTask> subTasksEpic = epicTask.getSubTasks();
+        EpicTask epicTask = getEpicTaskByID(subTask.getRelatedEpicTaskID());
+        List<Integer> subTasksID = epicTask.getSubTasksID();
 
-        if (subTasksEpic.isEmpty()) {
+        if (subTasksID.isEmpty()) {
             epicTask.setStatus(TaskStatus.NEW);
             return;
         }
@@ -130,17 +142,19 @@ public class TaskManager {
         int countSubTaskNEW = 0;
         int countSubTaskDONE = 0;
 
-        for (SubTask elemSubTask : subTasksEpic.values()) {
-            if (elemSubTask.getStatus() == TaskStatus.NEW) {
+        for (Integer subTaskID : subTasksID) {
+            SubTask subTaskByID = getSubTaskByID(subTaskID);
+
+            if (subTaskByID.getStatus() == TaskStatus.NEW) {
                 countSubTaskNEW++;
-            } else if (elemSubTask.getStatus() == TaskStatus.DONE) {
+            } else if (subTaskByID.getStatus() == TaskStatus.DONE) {
                 countSubTaskDONE++;
             }
         }
 
-        if (subTasksEpic.size() == countSubTaskNEW) {
+        if (subTasksID.size() == countSubTaskNEW) {
             epicTask.setStatus(TaskStatus.NEW);
-        } else if (subTasksEpic.size() == countSubTaskDONE) {
+        } else if (subTasksID.size() == countSubTaskDONE) {
             epicTask.setStatus(TaskStatus.DONE);
         } else {
             epicTask.setStatus(TaskStatus.IN_PROGRESS);

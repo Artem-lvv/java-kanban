@@ -28,10 +28,14 @@ public class Main {
         subTaskOne.setStatus(TaskStatus.IN_PROGRESS);
 
         tm.updateTaskByType(TypeTask.SUBTASK, subTaskOne);
+
+        System.out.println("После обновления подзадачи в Epic test 1");
         System.out.println(tm.getListEpicTasks());
 
         subTaskOne.setStatus(TaskStatus.DONE);
         tm.deleteTaskByTypeAndID(TypeTask.SUBTASK, 3);
+
+        System.out.println("После удаления задачи в Epic test 1");
         System.out.println(tm.getListEpicTasks());
 
         EpicTask epicTwo = new EpicTask("Epic test 2", "Описание Epic test 2");
@@ -42,7 +46,6 @@ public class Main {
         tm.addSubTask(subTaskThree);
 
         tm.deleteTaskByTypeAndID(TypeTask.EPIC, epicTwo.getID());
-
 
         Task taskOne = new Task("Task test 1", "Описание Task test 1");
         Task taskTwo = new Task("Task test 2", "Описание Task test 2");
