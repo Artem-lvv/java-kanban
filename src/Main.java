@@ -10,7 +10,7 @@ public class Main {
         System.out.println("Поехали!");
 
         // debug
-        TaskManager tm = new TaskManager();
+        TaskManager tm = new InMemoryTaskManager();
 
         EpicTask epicOne = new EpicTask("Epic test 1", "Описание Epic test 1");
         SubTask subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicOne);
