@@ -1,3 +1,5 @@
+package manager;
+
 import task.Task;
 import task.TypeTask;
 import task.relatedTask.EpicTask;

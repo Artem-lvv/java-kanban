@@ -1,8 +1,13 @@
+import manager.InMemoryTaskManager;
+import manager.Managers;
+import manager.TaskManager;
 import task.Task;
 import task.TaskStatus;
 import task.TypeTask;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
+
+import java.util.List;
 
 public class Main {
 
@@ -10,7 +15,7 @@ public class Main {
         System.out.println("Поехали!");
 
         // debug
-        TaskManager tm = new InMemoryTaskManager();
+        TaskManager tm = Managers.getDefault();
 
         EpicTask epicOne = new EpicTask("Epic test 1", "Описание Epic test 1");
         SubTask subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicOne);
@@ -55,6 +60,16 @@ public class Main {
         System.out.println(tm.getListTasks());
         System.out.println(tm.getListEpicTasks());
         System.out.println(tm.getListSubTasks());
+
+        // ТЗ 5
+        for (int i = 10; i < 24; i++) {
+            Task task = new Task("Task test " + i, "Описание Task test " + i);
+            tm.addTask(task);
+            tm.getTaskByID(task.getID());
+        }
+        List<Task> history = tm.getHistory();
+
+
 
     }
 }
