@@ -1,3 +1,5 @@
+package manager;
+
 import task.Task;
 import task.TaskStatus;
 import task.TypeTask;
@@ -13,13 +15,13 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks;
     private final HashMap<Integer, EpicTask> epicTasks;
     private final HashMap<Integer, SubTask> subTasks;
-    private final ArrayList<Task> historyViewTasks;
+    private final HistoryManager historyManager;
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
         epicTasks = new HashMap<>();
         subTasks = new HashMap<>();
-        historyViewTasks = new ArrayList<>(10);
+        historyManager = Managers.getDefaultHistory();
     }
 
     @Override
@@ -59,21 +61,21 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskByID(Integer id) {
         Task task = tasks.getOrDefault(id, null);
-        addRecordViewTasks(task);
+        historyManager.add(task);
         return task;
     }
 
     @Override
     public EpicTask getEpicTaskByID(Integer id) {
         EpicTask epicTask = epicTasks.getOrDefault(id, null);
-        addRecordViewTasks(epicTask);
+        historyManager.add(epicTask);
         return epicTask;
     }
 
     @Override
     public SubTask getSubTaskByID(Integer id) {
         SubTask subTask = subTasks.getOrDefault(id, null);
-        addRecordViewTasks(subTask);
+        historyManager.add(subTask);
         return subTask;
     }
 
@@ -151,17 +153,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Task> getHistory() {
-        return historyViewTasks;
-    }
-
-    private void addRecordViewTasks(Task task) {
-        if (task == null) {
-            return;
-        }
-        if (historyViewTasks.size() == 10) {
-            historyViewTasks.remove(0);
-        }
-        historyViewTasks.add(task);
+        return historyManager.getHistory();
     }
 
     private void checkAndUpdateEpicTaskStatus(SubTask subTask) {
