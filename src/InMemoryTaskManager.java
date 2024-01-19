@@ -13,11 +13,13 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks;
     private final HashMap<Integer, EpicTask> epicTasks;
     private final HashMap<Integer, SubTask> subTasks;
+    private final ArrayList<Task> historyViewTasks;
 
     public InMemoryTaskManager() {
         tasks = new HashMap<>();
         epicTasks = new HashMap<>();
         subTasks = new HashMap<>();
+        historyViewTasks = new ArrayList<>(10);
     }
 
     @Override
@@ -56,17 +58,23 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Task getTaskByID(Integer id) {
-        return tasks.getOrDefault(id, null);
+        Task task = tasks.getOrDefault(id, null);
+        addRecordViewTasks(task);
+        return task;
     }
 
     @Override
     public EpicTask getEpicTaskByID(Integer id) {
-        return epicTasks.getOrDefault(id, null);
+        EpicTask epicTask = epicTasks.getOrDefault(id, null);
+        addRecordViewTasks(epicTask);
+        return epicTask;
     }
 
     @Override
     public SubTask getSubTaskByID(Integer id) {
-        return subTasks.getOrDefault(id, null);
+        SubTask subTask = subTasks.getOrDefault(id, null);
+        addRecordViewTasks(subTask);
+        return subTask;
     }
 
     @Override
@@ -104,8 +112,7 @@ public class InMemoryTaskManager implements TaskManager {
                 break;
             case SUBTASK:
                 subTasks.put(task.getID(), (SubTask) task);
-
-                EpicTask epicTask = getEpicTaskByID((((SubTask) task).getRelatedEpicTaskID()));
+                EpicTask epicTask = epicTasks.getOrDefault((((SubTask) task).getRelatedEpicTaskID()), null);
                 epicTask.addSubTask((SubTask) task); // updating related tasks
                 checkAndUpdateEpicTaskStatus((SubTask) task);
                 break;
@@ -122,7 +129,7 @@ public class InMemoryTaskManager implements TaskManager {
                 break;
             case EPIC:
                 // delete related SubTasks
-                EpicTask epicTask = getEpicTaskByID(id);
+                EpicTask epicTask = epicTasks.getOrDefault(id, null);
                 List<Integer> subTasksIdEpicTask = epicTask.getSubTasksID();
                 subTasksIdEpicTask.forEach(subTasks::remove);
 
@@ -130,8 +137,8 @@ public class InMemoryTaskManager implements TaskManager {
                 break;
             case SUBTASK:
                 // delete related tasks
-                SubTask subTask = getSubTaskByID(id);
-                EpicTask epicTaskByID = getEpicTaskByID(subTask.getRelatedEpicTaskID());
+                SubTask subTask = subTasks.getOrDefault(id, null);
+                EpicTask epicTaskByID = epicTasks.getOrDefault(subTask.getRelatedEpicTaskID(), null);
                 epicTaskByID.deleteSubTaskToID(id);
 
                 checkAndUpdateEpicTaskStatus(subTask);
@@ -142,8 +149,23 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    @Override
+    public List<Task> getHistory() {
+        return historyViewTasks;
+    }
+
+    private void addRecordViewTasks(Task task) {
+        if (task == null) {
+            return;
+        }
+        if (historyViewTasks.size() == 10) {
+            historyViewTasks.remove(0);
+        }
+        historyViewTasks.add(task);
+    }
+
     private void checkAndUpdateEpicTaskStatus(SubTask subTask) {
-        EpicTask epicTask = getEpicTaskByID(subTask.getRelatedEpicTaskID());
+        EpicTask epicTask = epicTasks.getOrDefault(subTask.getRelatedEpicTaskID(), null);
         List<Integer> subTasksID = epicTask.getSubTasksID();
 
         if (subTasksID.isEmpty()) {
@@ -155,7 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
         int countSubTaskDONE = 0;
 
         for (Integer subTaskID : subTasksID) {
-            SubTask subTaskByID = getSubTaskByID(subTaskID);
+            SubTask subTaskByID = subTasks.getOrDefault(subTaskID, null);
 
             if (subTaskByID.getStatus() == TaskStatus.NEW) {
                 countSubTaskNEW++;
