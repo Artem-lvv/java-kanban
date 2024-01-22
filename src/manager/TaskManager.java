@@ -26,11 +26,11 @@ public interface TaskManager {
 
     void addEpicTask(EpicTask epicTask);
 
-    void addSubTask(SubTask subTask);
+    void addSubTask(SubTask subTask, EpicTask epicTask);
 
-    void updateTaskByType(TypeTask typeTask, Task task);
+    void updateTask(Task task);
 
-    void deleteTaskByTypeAndID(TypeTask typeTask, Integer id);
+    void deleteTaskByID(Integer id);
 
     List<Task> getHistory();
 }

@@ -51,6 +51,7 @@ public class InMemoryTaskManager implements TaskManager {
                 break;
             case SUBTASK:
                 epicTasks.forEach((id, epicTask) -> epicTask.deleteAllSubTasksID());
+                epicTasks.forEach((id, epicTask) -> epicTask.setStatus(TaskStatus.NEW));
                 subTasks.clear();
                 break;
             default:
@@ -94,18 +95,21 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void addSubTask(SubTask subTask) {
+    public void addSubTask(SubTask subTask, EpicTask epicTask) {
         if (subTask != null && !subTasks.containsKey(subTask.getID())) {
             subTasks.put(subTask.getID(), subTask);
+            epicTask.addSubTask(subTask);
+
+            checkAndUpdateEpicTaskStatus(subTask);
         }
     }
 
     @Override
-    public void updateTaskByType(TypeTask typeTask, Task task) {
+    public void updateTask(Task task) {
         if (task == null) {
             return;
         }
-        switch (typeTask) {
+        switch (task.getTypeTask()) {
             case TASK:
                 tasks.put(task.getID(), task);
                 break;
@@ -124,30 +128,25 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteTaskByTypeAndID(TypeTask typeTask, Integer id) {
-        switch (typeTask) {
-            case TASK:
-                tasks.remove(id);
-                break;
-            case EPIC:
-                // delete related SubTasks
-                EpicTask epicTask = epicTasks.getOrDefault(id, null);
-                List<Integer> subTasksIdEpicTask = epicTask.getSubTasksID();
-                subTasksIdEpicTask.forEach(subTasks::remove);
+    public void deleteTaskByID(Integer id) {
+        if (id == null) {
+            return;
+        }
+        if (tasks.containsKey(id)) {
+            tasks.remove(id);
+        } else if (epicTasks.containsKey(id)) {
+            EpicTask epicTask = epicTasks.getOrDefault(id, null);
+            List<Integer> subTasksIdEpicTask = epicTask.getSubTasksID();
+            subTasksIdEpicTask.forEach(subTasks::remove);
 
-                epicTasks.remove(id);
-                break;
-            case SUBTASK:
-                // delete related tasks
-                SubTask subTask = subTasks.getOrDefault(id, null);
-                EpicTask epicTaskByID = epicTasks.getOrDefault(subTask.getRelatedEpicTaskID(), null);
-                epicTaskByID.deleteSubTaskToID(id);
+            epicTasks.remove(id);
+        } else if (subTasks.containsKey(id)) {
+            SubTask subTask = subTasks.getOrDefault(id, null);
+            EpicTask epicTaskByID = epicTasks.getOrDefault(subTask.getRelatedEpicTaskID(), null);
+            epicTaskByID.deleteSubTaskToID(id);
 
-                checkAndUpdateEpicTaskStatus(subTask);
-                subTasks.remove(id);
-                break;
-            default:
-                break;
+            checkAndUpdateEpicTaskStatus(subTask);
+            subTasks.remove(id);
         }
     }
 

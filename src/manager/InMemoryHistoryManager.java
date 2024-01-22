@@ -5,19 +5,16 @@ import task.Task;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InMemoryHistoryManager implements HistoryManager{
-    private final ArrayList<Task> historyViewTasks;
-
-    public InMemoryHistoryManager() {
-        this.historyViewTasks = new ArrayList<>(10);
-    }
+public class InMemoryHistoryManager implements HistoryManager {
+    private static final int MAX_SIZE_HISTORY = 10;
+    private final ArrayList<Task> historyViewTasks = new ArrayList<>(MAX_SIZE_HISTORY);
 
     @Override
     public void add(Task task) {
         if (task == null) {
             return;
         }
-        if (historyViewTasks.size() == 10) {
+        if (historyViewTasks.size() == MAX_SIZE_HISTORY) {
             historyViewTasks.remove(0);
         }
         historyViewTasks.add(task);
@@ -25,6 +22,6 @@ public class InMemoryHistoryManager implements HistoryManager{
 
     @Override
     public List<Task> getHistory() {
-        return historyViewTasks;
+        return new ArrayList<>(historyViewTasks);
     }
 }

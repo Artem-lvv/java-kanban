@@ -14,7 +14,7 @@ public class Main {
         System.out.println("Поехали!");
 
         // debug
-        TaskManager tm = Managers.getDefault();
+        /*TaskManager tm = Managers.getDefault();
 
         EpicTask epicOne = new EpicTask("Epic test 1", "Описание Epic test 1");
         SubTask subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicOne);
@@ -31,13 +31,13 @@ public class Main {
 
         subTaskOne.setStatus(TaskStatus.IN_PROGRESS);
 
-        tm.updateTaskByType(TypeTask.SUBTASK, subTaskOne);
+        tm.updateTask(subTaskOne);
 
         System.out.println("После обновления подзадачи в Epic test 1");
         System.out.println(tm.getListEpicTasks());
 
         subTaskOne.setStatus(TaskStatus.DONE);
-        tm.deleteTaskByTypeAndID(TypeTask.SUBTASK, 3);
+        tm.deleteTaskByID(3);
 
         System.out.println("После удаления задачи в Epic test 1");
         System.out.println(tm.getListEpicTasks());
@@ -49,7 +49,7 @@ public class Main {
         tm.addEpicTask(epicTwo);
         tm.addSubTask(subTaskThree);
 
-        tm.deleteTaskByTypeAndID(TypeTask.EPIC, epicTwo.getID());
+        tm.deleteTaskByID(epicTwo.getID());
 
         Task taskOne = new Task("Task test 1", "Описание Task test 1");
         Task taskTwo = new Task("Task test 2", "Описание Task test 2");
@@ -66,7 +66,7 @@ public class Main {
             tm.addTask(task);
             tm.getTaskByID(task.getID());
         }
-        List<Task> history = tm.getHistory();
+        List<Task> history = tm.getHistory();*/
 
 
 

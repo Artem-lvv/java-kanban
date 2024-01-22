@@ -1,6 +1,7 @@
 package task.relatedTask;
 
 import task.Task;
+import task.TypeTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +11,8 @@ public class EpicTask extends Task {
 
     public EpicTask(String name, String description) {
         super(name, description);
-        subTasksID = new ArrayList<>();
-    }
-
-    public EpicTask(String name, String description, SubTask subTask) {
-        this(name, description);
-        subTasksID.add(subTask.getID());
+        this.subTasksID = new ArrayList<>();
+        this.typeTask = TypeTask.EPIC;
     }
 
     public List<Integer> getSubTasksID() {

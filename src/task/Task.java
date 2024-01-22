@@ -9,11 +9,14 @@ public class Task {
     protected Integer id;
     protected TaskStatus status;
 
+    protected TypeTask typeTask;
+
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
         this.id = counterTaskID++;
         this.status = TaskStatus.NEW;
+        this.typeTask = TypeTask.TASK;
     }
 
     public String getName() {
@@ -42,6 +45,10 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public TypeTask getTypeTask() {
+        return typeTask;
     }
 
     @Override
