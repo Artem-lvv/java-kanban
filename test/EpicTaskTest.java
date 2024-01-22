@@ -1,3 +1,6 @@
+import manager.Managers;
+import manager.TaskManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
@@ -7,11 +10,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EpicTaskTest {
 
-    private final static EpicTask epicTask = new EpicTask("EpicTask test", "Описание EpicTask test");
+    private EpicTask epicTask;
+
+    @BeforeEach
+    void beforeEach() {
+        epicTask = new EpicTask("EpicTask test", "Описание EpicTask test");
+    }
 
     @Test
     void shouldReturnEquals() {
-        assertEquals(epicTask, epicTask);
+        TaskManager taskManager = Managers.getDefault();
+        taskManager.addEpicTask(epicTask);
+        EpicTask getEpicTask = taskManager.getEpicTaskByID(epicTask.getID());
+        assertEquals(epicTask, getEpicTask);
     }
 
     @Test

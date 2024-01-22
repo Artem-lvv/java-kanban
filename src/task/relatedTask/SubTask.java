@@ -1,6 +1,7 @@
 package task.relatedTask;
 
 import task.Task;
+import task.TypeTask;
 
 public class SubTask extends Task {
     private final Integer relatedEpicTaskID;
@@ -8,6 +9,7 @@ public class SubTask extends Task {
     public SubTask(String name, String description, EpicTask epicTask) {
         super(name, description);
         this.relatedEpicTaskID = epicTask.getID();
+        this.typeTask = TypeTask.SUBTASK;
     }
 
     public Integer getRelatedEpicTaskID() {
