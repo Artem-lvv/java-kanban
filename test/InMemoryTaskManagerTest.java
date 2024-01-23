@@ -28,11 +28,8 @@ class InMemoryTaskManagerTest {
 
         taskManager.addEpicTask(epicTask);
 
-        //epicTask.addSubTask(subTaskOne);
-
-        taskManager.addSubTask(subTaskOne, epicTask);
-        //epicTask.addSubTask(subTaskTwo);
-        taskManager.addSubTask(subTaskTwo, epicTask);
+        taskManager.addSubTask(subTaskOne);
+        taskManager.addSubTask(subTaskTwo);
         taskManager.addTask(task);
     }
 

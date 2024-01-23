@@ -23,7 +23,7 @@ class SubTaskTest {
     void shouldReturnEquals() {
         TaskManager taskManager = Managers.getDefault();
         taskManager.addEpicTask(epicTask);
-        taskManager.addSubTask(subTask, epicTask);
+        taskManager.addSubTask(subTask);
         SubTask getSubTask = taskManager.getSubTaskByID(subTask.getID());
 
         assertEquals(subTask, getSubTask);
