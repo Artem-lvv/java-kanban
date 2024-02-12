@@ -41,6 +41,7 @@ public class EpicTask extends Task {
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
+                ", typeTask=" + typeTask +
                 '}';
     }
 }

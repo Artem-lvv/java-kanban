@@ -31,6 +31,12 @@ class InMemoryTaskManagerTest {
         taskManager.addSubTask(subTaskOne);
         taskManager.addSubTask(subTaskTwo);
         taskManager.addTask(task);
+
+        // add history
+        taskManager.getEpicTaskByID(epicTask.getID());
+        taskManager.getSubTaskByID(subTaskOne.getID());
+        taskManager.getTaskByID(task.getID());
+        taskManager.getSubTaskByID(subTaskTwo.getID());
     }
 
     @Test
@@ -51,6 +57,15 @@ class InMemoryTaskManagerTest {
     }
 
     @Test
+    void deleteTask() {
+        taskManager.deleteTaskByID(subTaskOne.getID());
+
+        assertAll("delete task",
+                () -> assertEquals(1, epicTask.getSubTasksID().size()),
+                () -> assertEquals(subTaskTwo.getID(), epicTask.getSubTasksID().get(0)));
+    }
+
+    @Test
     void shiftAndUpdateEpicStatus() {
         assertEquals(TaskStatus.NEW, epicTask.getStatus());
 
@@ -64,5 +79,20 @@ class InMemoryTaskManagerTest {
 
         assertEquals(TaskStatus.DONE, epicTask.getStatus());
     }
+
+    @Test
+    void history() {
+        assertAll("get history",
+                () -> assertEquals(4, taskManager.getHistory().size()),
+                () -> assertEquals(subTaskTwo, taskManager.getHistory().get(0)));
+
+        taskManager.deleteTaskByID(epicTask.getID());
+
+        assertAll("delete history",
+                () -> assertEquals(1, taskManager.getHistory().size()),
+                () -> assertEquals(task, taskManager.getHistory().get(0)));
+
+    }
+
 
 }

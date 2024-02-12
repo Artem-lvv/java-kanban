@@ -1,3 +1,4 @@
+import manager.InMemoryHistoryManager;
 import manager.Managers;
 import manager.TaskManager;
 import task.Task;
@@ -13,62 +14,45 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Поехали!");
 
-        // debug
-        /*TaskManager tm = Managers.getDefault();
+        TaskManager tm = Managers.getDefault();
 
-        EpicTask epicOne = new EpicTask("Epic test 1", "Описание Epic test 1");
-        SubTask subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicOne);
-        SubTask subTaskTwo = new SubTask("SubTask test 2", "Описание SubTask test 2", epicOne);
-        epicOne.addSubTask(subTaskOne);
-        epicOne.addSubTask(subTaskTwo);
+        Task taskFirst = new Task("Task test 1", "Description task test 1");
+        Task taskSecond = new Task("Task test 2", "Description task test 2");
 
-        tm.addEpicTask(epicOne);
-        tm.addSubTask(subTaskOne);
-        tm.addSubTask(subTaskTwo);
+        tm.addTask(taskFirst);
+        tm.addTask(taskSecond);
 
-        System.out.println(tm.getListEpicTasks());
-        System.out.println(tm.getListSubTasks());
+        EpicTask epicTaskFirst = new EpicTask("Epic test 1", "Описание Epic test 1");
+        SubTask subTaskFirst = new SubTask("SubTask test 1", "Описание SubTask test 1", epicTaskFirst);
+        SubTask subTaskSecond = new SubTask("SubTask test 2", "Описание SubTask test 2", epicTaskFirst);
+        SubTask subTaskThird = new SubTask("SubTask test 3", "Описание SubTask test 3", epicTaskFirst);
 
-        subTaskOne.setStatus(TaskStatus.IN_PROGRESS);
+        tm.addEpicTask(epicTaskFirst);
+        tm.addSubTask(subTaskFirst);
+        tm.addSubTask(subTaskSecond);
+        tm.addSubTask(subTaskThird);
 
-        tm.updateTask(subTaskOne);
+        EpicTask epicTaskSecond = new EpicTask("Epic test 2", "Описание Epic test 2");
 
-        System.out.println("После обновления подзадачи в Epic test 1");
-        System.out.println(tm.getListEpicTasks());
+        tm.addEpicTask(epicTaskSecond);
 
-        subTaskOne.setStatus(TaskStatus.DONE);
-        tm.deleteTaskByID(3);
+        tm.getSubTaskByID(subTaskThird.getID());
+        tm.getTaskByID(taskFirst.getID());
+        tm.getSubTaskByID(subTaskSecond.getID());
+        tm.getEpicTaskByID(epicTaskFirst.getID());
+        tm.getEpicTaskByID(epicTaskSecond.getID());
+        tm.getSubTaskByID(subTaskSecond.getID());
 
-        System.out.println("После удаления задачи в Epic test 1");
-        System.out.println(tm.getListEpicTasks());
+        tm.getHistory().forEach(System.out::println);
+        System.out.println();
 
-        EpicTask epicTwo = new EpicTask("Epic test 2", "Описание Epic test 2");
-        SubTask subTaskThree = new SubTask("SubTask test 3", "Описание SubTask test 3", epicTwo);
-        epicTwo.addSubTask(subTaskThree);
+        tm.deleteTaskByID(taskFirst.getID());
 
-        tm.addEpicTask(epicTwo);
-        tm.addSubTask(subTaskThree);
+        tm.getHistory().forEach(System.out::println);
+        System.out.println();
 
-        tm.deleteTaskByID(epicTwo.getID());
+        tm.deleteTaskByID(epicTaskFirst.getID());
 
-        Task taskOne = new Task("Task test 1", "Описание Task test 1");
-        Task taskTwo = new Task("Task test 2", "Описание Task test 2");
-        tm.addTask(taskOne);
-        tm.addTask(taskTwo);
-
-        System.out.println(tm.getListTasks());
-        System.out.println(tm.getListEpicTasks());
-        System.out.println(tm.getListSubTasks());
-
-        // ТЗ 5
-        for (int i = 10; i < 24; i++) {
-            Task task = new Task("Task test " + i, "Описание Task test " + i);
-            tm.addTask(task);
-            tm.getTaskByID(task.getID());
-        }
-        List<Task> history = tm.getHistory();*/
-
-
-
+        tm.getHistory().forEach(System.out::println);
     }
 }

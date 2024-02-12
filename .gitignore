@@ -24,3 +24,4 @@ hs_err_pid*
 /.idea/dbnavigator.xml
 /.idea/dbnavigator.xml
 /.idea/sonarlint/
+/.idea/jpa-buddy.xml
