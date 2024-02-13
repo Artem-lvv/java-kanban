@@ -8,7 +8,6 @@ public class Task {
     protected String description;
     protected Integer id;
     protected TaskStatus status;
-
     protected TypeTask typeTask;
 
     public Task(String name, String description) {
@@ -71,6 +70,7 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
+                ", typeTask=" + typeTask +
                 '}';
     }
 }

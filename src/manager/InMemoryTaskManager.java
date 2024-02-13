@@ -43,15 +43,19 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllTaskByType(TypeTask typeTask) {
         switch (typeTask) {
             case TASK:
+                tasks.forEach((id, epicTask) -> historyManager.remove(id));
                 tasks.clear();
                 break;
             case EPIC:
+                epicTasks.forEach((id, epicTask) -> historyManager.remove(id));
+                subTasks.forEach((id, epicTask) -> historyManager.remove(id));
                 epicTasks.clear();
                 subTasks.clear();
                 break;
             case SUBTASK:
                 epicTasks.forEach((id, epicTask) -> epicTask.deleteAllSubTasksID());
                 epicTasks.forEach((id, epicTask) -> epicTask.setStatus(TaskStatus.NEW));
+                subTasks.forEach((id, epicTask) -> historyManager.remove(id));
                 subTasks.clear();
                 break;
             default:
@@ -133,12 +137,16 @@ public class InMemoryTaskManager implements TaskManager {
             return;
         }
         if (tasks.containsKey(id)) {
+            historyManager.remove(id);
             tasks.remove(id);
         } else if (epicTasks.containsKey(id)) {
             EpicTask epicTask = epicTasks.getOrDefault(id, null);
             List<Integer> subTasksIdEpicTask = epicTask.getSubTasksID();
-            subTasksIdEpicTask.forEach(subTasks::remove);
-
+            for (Integer idSubTask : subTasksIdEpicTask) {
+                historyManager.remove(idSubTask);
+                subTasks.remove(idSubTask);
+            }
+            historyManager.remove(id);
             epicTasks.remove(id);
         } else if (subTasks.containsKey(id)) {
             SubTask subTask = subTasks.getOrDefault(id, null);
@@ -146,6 +154,7 @@ public class InMemoryTaskManager implements TaskManager {
             epicTaskByID.deleteSubTaskToID(id);
 
             checkAndUpdateEpicTaskStatus(subTask);
+            historyManager.remove(id);
             subTasks.remove(id);
         }
     }

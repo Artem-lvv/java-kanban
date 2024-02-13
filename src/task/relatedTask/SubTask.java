@@ -16,6 +16,8 @@ public class SubTask extends Task {
         return relatedEpicTaskID;
     }
 
+
+
     @Override
     public String toString() {
         return "SubTask{" +
@@ -24,6 +26,7 @@ public class SubTask extends Task {
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status=" + status +
+                ", typeTask=" + typeTask +
                 '}';
     }
 }
