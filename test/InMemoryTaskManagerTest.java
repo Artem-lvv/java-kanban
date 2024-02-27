@@ -23,8 +23,8 @@ class InMemoryTaskManagerTest {
         taskManager = Managers.getDefault();
         task = new Task("Task test", "Описание Task");
         epicTask = new EpicTask("EpicTask test", "Описание EpicTask test");
-        subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicTask);
-        subTaskTwo = new SubTask("SubTask test 2", "Описание SubTask test 2", epicTask);
+        subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicTask.getID());
+        subTaskTwo = new SubTask("SubTask test 2", "Описание SubTask test 2", epicTask.getID());
 
         taskManager.addEpicTask(epicTask);
 

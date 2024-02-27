@@ -102,7 +102,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void addSubTask(SubTask subTask) {
         if (subTask != null && !subTasks.containsKey(subTask.getID())) {
             subTasks.put(subTask.getID(), subTask);
-            epicTasks.getOrDefault(subTask.getRelatedEpicTaskID(), null).addSubTask(subTask);
+            epicTasks.getOrDefault(subTask.getRelatedEpicTaskID(), null).addSubTask(subTask.getID());
 
             checkAndUpdateEpicTaskStatus(subTask);
         }
@@ -123,7 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
             case SUBTASK:
                 subTasks.put(task.getID(), (SubTask) task);
                 EpicTask epicTask = epicTasks.getOrDefault((((SubTask) task).getRelatedEpicTaskID()), null);
-                epicTask.addSubTask((SubTask) task); // updating related tasks
+                epicTask.addSubTask(task.getID()); // updating related tasks
                 checkAndUpdateEpicTaskStatus((SubTask) task);
                 break;
             default:
@@ -164,6 +164,10 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
+    public HistoryManager getHistoryManager() {
+        return historyManager;
+    }
+
     private void checkAndUpdateEpicTaskStatus(SubTask subTask) {
         EpicTask epicTask = epicTasks.getOrDefault(subTask.getRelatedEpicTaskID(), null);
         List<Integer> subTasksID = epicTask.getSubTasksID();
@@ -178,6 +182,10 @@ public class InMemoryTaskManager implements TaskManager {
 
         for (Integer subTaskID : subTasksID) {
             SubTask subTaskByID = subTasks.getOrDefault(subTaskID, null);
+
+            if (subTaskByID == null) {
+                continue;
+            }
 
             if (subTaskByID.getStatus() == TaskStatus.NEW) {
                 countSubTaskNEW++;

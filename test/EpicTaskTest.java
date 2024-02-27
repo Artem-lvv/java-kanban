@@ -27,10 +27,10 @@ class EpicTaskTest {
 
     @Test
     void addSubTaskInEpicTask() {
-        SubTask subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicTask);
-        SubTask subTaskTwo = new SubTask("SubTask test 2", "Описание SubTask test 2", epicTask);
-        epicTask.addSubTask(subTaskOne);
-        epicTask.addSubTask(subTaskTwo);
+        SubTask subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicTask.getID());
+        SubTask subTaskTwo = new SubTask("SubTask test 2", "Описание SubTask test 2", epicTask.getID());
+        epicTask.addSubTask(subTaskOne.getID());
+        epicTask.addSubTask(subTaskTwo.getID());
 
         assertAll("add two SubTask in EpicTask",
                 () -> assertEquals(epicTask.getID(), subTaskOne.getRelatedEpicTaskID()),
