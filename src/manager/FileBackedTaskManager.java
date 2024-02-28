@@ -19,8 +19,8 @@ import java.util.stream.Stream;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final Path pathFile;
-    private static final String descriptionTaskInFile = "id,type,name,status,description,epic,subTask";
-    private static final String descriptionHistoryInFile = "history";
+    private static final String DESCRIPTION_TASK_IN_FILE = "id,type,name,status,description,epic,subTask";
+    private static final String DESCRIPTION_HISTORY_IN_FILE = "history";
     private final HashMap<Integer, Task> tasksFromFile = new HashMap<>();
     private final List<Integer> historyTasksFromFile = new ArrayList<>();
 
@@ -129,7 +129,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         allTasks.sort(Comparator.comparingInt(Task::getID));
 
         try {
-            writer.write(descriptionTaskInFile);
+            writer.write(DESCRIPTION_TASK_IN_FILE);
         } catch (IOException e) {
             throw new ManagerSaveException(e.getMessage());
         }
@@ -151,7 +151,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         List<Task> historyList = getHistory();
 
         try {
-            writer.write("\n" + descriptionHistoryInFile + "\n");
+            writer.write("\n" + DESCRIPTION_HISTORY_IN_FILE + "\n");
         } catch (IOException e) {
             throw new ManagerSaveException(e.getMessage());
         }
@@ -174,7 +174,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             while (reader.ready()) {
                 String line = reader.readLine();
 
-                if (line.equals(descriptionHistoryInFile)) {
+                if (line.equals(DESCRIPTION_HISTORY_IN_FILE)) {
                     line = reader.readLine();
 
                     historyTasksFromFile.addAll(Arrays.stream(line.split(","))
@@ -183,7 +183,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     return;
                 }
 
-                if (line.equals(descriptionTaskInFile)) {
+                if (line.equals(DESCRIPTION_TASK_IN_FILE)) {
                     line = reader.readLine();
                 }
 
