@@ -16,7 +16,7 @@ class SubTaskTest {
     @BeforeEach
     void beforeEach() {
         epicTask = new EpicTask("Epic task", "Описание EpicTask");
-        subTask = new SubTask("SubTask test", "Описание SubTask test", epicTask);
+        subTask = new SubTask("SubTask test", "Описание SubTask test", epicTask.getID());
     }
 
     @Test
