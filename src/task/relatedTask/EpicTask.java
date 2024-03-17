@@ -3,40 +3,51 @@ package task.relatedTask;
 import task.Task;
 import task.TypeTask;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EpicTask extends Task {
-    private final ArrayList<Integer> subTasksID;
+    private final List<Integer> idSubTaskList;
+    private LocalDateTime endTime;
 
     public EpicTask(String name, String description) {
         super(name, description);
-        this.subTasksID = new ArrayList<>();
+        this.idSubTaskList = new ArrayList<>();
         this.typeTask = TypeTask.EPIC;
     }
 
-    public List<Integer> getSubTasksID() {
-        return subTasksID;
+    public List<Integer> getIdSubTaskList() {
+        return idSubTaskList;
     }
 
     public void addSubTask(Integer subTaskId) {
-        if (!subTasksID.contains(subTaskId)) {
-            subTasksID.add(subTaskId);
+        if (!idSubTaskList.contains(subTaskId)) {
+            idSubTaskList.add(subTaskId);
         }
     }
 
     public void deleteAllSubTasksID() {
-        subTasksID.clear();
+        idSubTaskList.clear();
     }
 
     public void deleteSubTaskToID(Integer id) {
-        subTasksID.remove(id);
+        idSubTaskList.remove(id);
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     @Override
     public String toString() {
         return "Epic{" +
-                "subTasksID=" + subTasksID +
+                "subTasksID=" + idSubTaskList +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", id=" + id +

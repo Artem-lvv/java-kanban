@@ -1,9 +1,13 @@
+package task;
+
 import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Task;
 import task.TaskStatus;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,9 +25,9 @@ class TaskTest {
     void shouldReturnEquals() {
         TaskManager taskManager = Managers.getDefault();
         taskManager.addTask(task);
-        Task getTask = taskManager.getTaskByID(task.getID());
+        Optional<Task> taskFromTaskManager = taskManager.getTaskByID(task.getID());
 
-        assertEquals(task, getTask);
+        assertEquals(task, taskFromTaskManager.get());
     }
 
     @Test
