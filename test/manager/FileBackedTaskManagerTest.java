@@ -78,7 +78,6 @@ class FileBackedTaskManagerTest {
                 + defaultTimeString + "\n"
                 + "history\n" +
                 "4,1,3,2,\n";
-
     }
 
     @Test

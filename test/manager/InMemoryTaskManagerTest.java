@@ -8,31 +8,38 @@ import task.TaskStatus;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
 
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
-    private LocalDateTime mondayCurrentWeek;
-    int thirtyMinutes;
-    int fourtyMinutes;
+    private LocalDateTime defaultStartTime;
+    private int thirtyMinutes;
+    private int fourtyMinutes;
+    private Duration durationThirtyThreeMinutes;
+    private Duration durationThirtyMinutes;
+    private Duration durationTwentyMinutes;
     private TaskManager taskManager;
     private Task task;
     private EpicTask epicTask;
     private SubTask subTaskOne;
     private SubTask subTaskTwo;
     private SubTask subTaskThree;
-    private SubTask subTaskFouth;
+    private SubTask subTaskFour;
+    private Duration durationTenMinutes;
+
 
     @BeforeEach
     void beforeEach() {
-        mondayCurrentWeek = LocalDateTime.now().with(DayOfWeek.MONDAY).truncatedTo(ChronoUnit.DAYS);
+        defaultStartTime = LocalDateTime.of(2024, 1, 1, 0, 0);;
         thirtyMinutes = 30;
         fourtyMinutes = 40;
+        durationThirtyThreeMinutes = Duration.ofMinutes(33);
+        durationThirtyMinutes = Duration.ofMinutes(30);
+        durationTwentyMinutes = Duration.ofMinutes(30);
+        durationTenMinutes = Duration.ofMinutes(10);
 
         taskManager = Managers.getDefault();
         task = new Task("Task test", "Описание Task");
@@ -40,7 +47,7 @@ class InMemoryTaskManagerTest {
         subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicTask.getID());
         subTaskTwo = new SubTask("SubTask test 2", "Описание SubTask test 2", epicTask.getID());
         subTaskThree = new SubTask("SubTask test 3", "Описание SubTask test 3", epicTask.getID());
-        subTaskFouth = new SubTask("SubTask test 4", "Описание SubTask test 4", epicTask.getID());
+        subTaskFour = new SubTask("SubTask test 4", "Описание SubTask test 4", epicTask.getID());
 
         taskManager.addEpicTask(epicTask);
 
@@ -112,25 +119,28 @@ class InMemoryTaskManagerTest {
 
     @Test
     void updateTimeStartAndDurationTaskAndSubTask() {
-        task.setStartTime(mondayCurrentWeek);
+        Duration durationFiveDays = Duration.ofDays(5);
+        LocalDateTime startTimePlusThreeDays = defaultStartTime.plusDays(3);
+
+        task.setStartTime(defaultStartTime);
         task.setDuration(Duration.ofMinutes(thirtyMinutes));
 
-        subTaskOne.setStartTime(mondayCurrentWeek.plusHours(1));
+        subTaskOne.setStartTime(defaultStartTime.plusHours(1));
         subTaskOne.setDuration(Duration.ofMinutes(fourtyMinutes));
 
-        subTaskThree.setStartTime(mondayCurrentWeek);
-        subTaskThree.setDuration(Duration.ofDays(5)); // long time task
+        subTaskThree.setStartTime(defaultStartTime);
+        subTaskThree.setDuration(durationFiveDays); // long time task
 
-        subTaskFouth.setStartTime(mondayCurrentWeek.plusDays(3));
-        subTaskFouth.setDuration(Duration.ofMinutes(10));
+        subTaskFour.setStartTime(startTimePlusThreeDays);
+        subTaskFour.setDuration(durationTenMinutes);
 
         assertAll("adding start time and duration to Task and Subtask, and get end time task",
-                () -> assertEquals(mondayCurrentWeek, task.getStartTime()),
+                () -> assertEquals(defaultStartTime, task.getStartTime()),
                 () -> assertEquals(thirtyMinutes, task.getDuration().toMinutes()),
-                () -> assertEquals(mondayCurrentWeek.plusMinutes(thirtyMinutes), task.getEndTime()),
-                () -> assertEquals(mondayCurrentWeek.plusHours(1), subTaskOne.getStartTime()),
+                () -> assertEquals(defaultStartTime.plusMinutes(thirtyMinutes), task.getEndTime()),
+                () -> assertEquals(defaultStartTime.plusHours(1), subTaskOne.getStartTime()),
                 () -> assertEquals(fourtyMinutes, subTaskOne.getDuration().toMinutes()),
-                () -> assertEquals(mondayCurrentWeek.plusMinutes(fourtyMinutes).plusHours(1),
+                () -> assertEquals(defaultStartTime.plusMinutes(fourtyMinutes).plusHours(1),
                         subTaskOne.getEndTime()));
 
         taskManager.updateTask(subTaskOne);
@@ -142,7 +152,6 @@ class InMemoryTaskManagerTest {
                 () -> assertEquals(subTaskOne.getDuration(), epicTask.getDuration()));
 
         taskManager.addSubTask(subTaskThree); // long time task
-        //taskManager.addSubTask(subTaskFouth);
 
         assertAll("EpicTask update and get startTime, endTime and duration // equals subTaskThree",
                 () -> assertEquals(subTaskThree.getStartTime(), epicTask.getStartTime()),
@@ -153,21 +162,25 @@ class InMemoryTaskManagerTest {
 
     @Test
     void getPrioritizedTasks() {
-        task.setStartTime(mondayCurrentWeek);
+        LocalDateTime startTimePlusOneDay = defaultStartTime.plusDays(1);
+        LocalDateTime startTimePlusFourDay = defaultStartTime.plusDays(4);
+
+        task.setStartTime(defaultStartTime);
         task.setDuration(Duration.ofMinutes(thirtyMinutes));
-        subTaskOne.setStartTime(mondayCurrentWeek.plusDays(4));
-        subTaskOne.setDuration(Duration.ofMinutes(20));
-        subTaskFouth.setStartTime(mondayCurrentWeek.plusDays(1));
-        subTaskFouth.setDuration(Duration.ofMinutes(10));
+        subTaskOne.setStartTime(startTimePlusFourDay);
+        subTaskOne.setDuration(durationTwentyMinutes);
+
+        subTaskFour.setStartTime(startTimePlusOneDay);
+        subTaskFour.setDuration(durationTenMinutes);
 
         taskManager.updateTask(task);
         taskManager.updateTask(subTaskOne);
         taskManager.updateTask(subTaskTwo); // empty time task // update
         taskManager.addSubTask(subTaskThree); // empty time task // addSubTask
-        taskManager.addSubTask(subTaskFouth);
+        taskManager.addSubTask(subTaskFour);
 
         List<Task> prioritizedTasks = taskManager.getPrioritizedTasks();
-        List<Task> correctSequence = List.of(task, subTaskFouth, subTaskOne);
+        List<Task> correctSequence = List.of(task, subTaskFour, subTaskOne);
 
         assertAll("no tasks with empty start date",
                 () -> assertFalse(prioritizedTasks.contains(subTaskTwo)),
@@ -179,32 +192,33 @@ class InMemoryTaskManagerTest {
 
     @Test
     void checkTaskIntersectionInTime() {
-        subTaskFouth.setStartTime(mondayCurrentWeek);
-        subTaskFouth.setDuration(Duration.ofMinutes(33));
-        taskManager.addSubTask(subTaskFouth);
+        subTaskFour.setStartTime(defaultStartTime);
+        subTaskFour.setDuration(durationThirtyThreeMinutes);
+        taskManager.addSubTask(subTaskFour);
 
-        task.setStartTime(mondayCurrentWeek.plusMinutes(64));
-        task.setDuration(Duration.ofMinutes(30));
+        LocalDateTime startTimePlusSixtyFourMinutes = defaultStartTime.plusMinutes(64);
+        task.setStartTime(startTimePlusSixtyFourMinutes);
+        task.setDuration(durationThirtyMinutes);
         taskManager.updateTask(task);
 
-        subTaskThree.setStartTime(mondayCurrentWeek);
-        subTaskThree.setDuration(Duration.ofMinutes(20));
+        subTaskThree.setStartTime(defaultStartTime);
+        subTaskThree.setDuration(durationTwentyMinutes);
 
         InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) taskManager;
 
         assertAll("add task in variable temporaryTaskWindowMap",
                 () -> assertTrue(inMemoryTaskManager.getTemporaryTaskWindowMap()
-                        .containsKey(mondayCurrentWeek)),
+                        .containsKey(defaultStartTime)),
                 () -> assertTrue(inMemoryTaskManager.getTemporaryTaskWindowMap()
-                        .containsKey(mondayCurrentWeek.plusMinutes(InMemoryTaskManager.DEFAULT_WINDOW_TIME))),
+                        .containsKey(defaultStartTime.plusMinutes(InMemoryTaskManager.DEFAULT_WINDOW_TIME))),
                 () -> assertTrue(inMemoryTaskManager.getTemporaryTaskWindowMap()
-                        .containsKey(mondayCurrentWeek.plusMinutes(InMemoryTaskManager.DEFAULT_WINDOW_TIME * 2))),
-                () -> assertEquals(subTaskFouth, inMemoryTaskManager.getTemporaryTaskWindowMap()
-                        .get(mondayCurrentWeek)),
-                () -> assertEquals(subTaskFouth, inMemoryTaskManager.getTemporaryTaskWindowMap()
-                        .get(mondayCurrentWeek.plusMinutes(InMemoryTaskManager.DEFAULT_WINDOW_TIME))),
-                () -> assertEquals(subTaskFouth, inMemoryTaskManager.getTemporaryTaskWindowMap()
-                        .get(mondayCurrentWeek.plusMinutes(InMemoryTaskManager.DEFAULT_WINDOW_TIME * 2))));
+                        .containsKey(defaultStartTime.plusMinutes(InMemoryTaskManager.DEFAULT_WINDOW_TIME * 2))),
+                () -> assertEquals(subTaskFour, inMemoryTaskManager.getTemporaryTaskWindowMap()
+                        .get(defaultStartTime)),
+                () -> assertEquals(subTaskFour, inMemoryTaskManager.getTemporaryTaskWindowMap()
+                        .get(defaultStartTime.plusMinutes(InMemoryTaskManager.DEFAULT_WINDOW_TIME))),
+                () -> assertEquals(subTaskFour, inMemoryTaskManager.getTemporaryTaskWindowMap()
+                        .get(defaultStartTime.plusMinutes(InMemoryTaskManager.DEFAULT_WINDOW_TIME * 2))));
 
         assertAll("сorrect quantity",
                 () -> assertEquals(2, inMemoryTaskManager.getTemporaryTaskWindowMap().values().stream()
