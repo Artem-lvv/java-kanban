@@ -6,6 +6,8 @@ import task.TypeTask;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,15 +22,21 @@ public class CSVTaskFormatter {
 
         String subTasks = "null";
 
-        if (task instanceof EpicTask epicTask && !epicTask.getSubTasksID().isEmpty()) {
-            subTasks = epicTask.getSubTasksID().stream().map(String::valueOf).collect(Collectors.joining("-"));
+        if (task instanceof EpicTask epicTask && !epicTask.getIdSubTaskList().isEmpty()) {
+            subTasks = epicTask.getIdSubTaskList().stream().map(String::valueOf).collect(Collectors.joining("-"));
         }
 
-        return  String.join(",",
-                task.getID().toString(), task.getTypeTask().toString(),
-                task.getName(), task.getStatus().toString(), task.getDescription(),
-                task instanceof SubTask subTask ? subTask.getRelatedEpicTaskID().toString() : "null",
-                subTasks);
+        return String.join(",",
+                task.getID().toString(),
+                task.getTypeTask().toString(),
+                task.getName(),
+                task.getStatus().toString(),
+                task.getDescription(),
+                task instanceof SubTask subTask ? subTask.getIdRelatedEpicTask().toString() : "null",
+                subTasks,
+                task.getStartTime() != null ? task.getStartTime().toString() : "null",
+                task.getEndTime() != null ? task.getEndTime().toString() : "null",
+                task.getDuration() != null ? String.valueOf(task.getDuration().toMinutes()) : "null");
     }
 
     public static Task stringToTask(String stringTask) {
@@ -43,6 +51,9 @@ public class CSVTaskFormatter {
         List<Integer> subTaskIdForEpicTask = !splitTask[6].equals("null")
                 ? Arrays.stream(splitTask[6].split("-")).map(Integer::parseInt).toList()
                 : Collections.emptyList();
+        LocalDateTime startTimeTask = !splitTask[7].equals("null") ? LocalDateTime.parse(splitTask[7]) : null;
+        LocalDateTime endTimeTask = !splitTask[8].equals("null") ? LocalDateTime.parse(splitTask[8]) : null;
+        Duration durationTask = !splitTask[9].equals("null") ? Duration.ofMinutes(Integer.parseInt(splitTask[9])) : null;
 
         Task newTask = null;
 
@@ -55,11 +66,14 @@ public class CSVTaskFormatter {
             if (!subTaskIdForEpicTask.isEmpty()) {
                 subTaskIdForEpicTask.forEach(epicTask::addSubTask);
             }
+            epicTask.setEndTime(endTimeTask);
             newTask = epicTask;
         }
 
         newTask.setId(id);
         newTask.setStatus(taskStatus);
+        newTask.setStartTime(startTimeTask);
+        newTask.setDuration(durationTask);
 
         return newTask;
     }

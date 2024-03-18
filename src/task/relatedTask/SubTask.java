@@ -4,22 +4,22 @@ import task.Task;
 import task.TypeTask;
 
 public class SubTask extends Task {
-    private final Integer relatedEpicTaskID;
+    private final Integer idRelatedEpicTask;
 
     public SubTask(String name, String description, Integer epicTaskId) {
         super(name, description);
-        this.relatedEpicTaskID = epicTaskId;
+        this.idRelatedEpicTask = epicTaskId;
         this.typeTask = TypeTask.SUBTASK;
     }
 
-    public Integer getRelatedEpicTaskID() {
-        return relatedEpicTaskID;
+    public Integer getIdRelatedEpicTask() {
+        return idRelatedEpicTask;
     }
 
     @Override
     public String toString() {
         return "SubTask{" +
-                "relatedEpicTaskID=" + relatedEpicTaskID +
+                "relatedEpicTaskID=" + idRelatedEpicTask +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", id=" + id +

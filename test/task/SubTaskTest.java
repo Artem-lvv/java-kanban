@@ -1,3 +1,5 @@
+package task;
+
 import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -5,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import task.TaskStatus;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,9 +28,9 @@ class SubTaskTest {
         TaskManager taskManager = Managers.getDefault();
         taskManager.addEpicTask(epicTask);
         taskManager.addSubTask(subTask);
-        SubTask getSubTask = taskManager.getSubTaskByID(subTask.getID());
+        Optional<SubTask> getSubTask = taskManager.getSubTaskByID(subTask.getID());
 
-        assertEquals(subTask, getSubTask);
+        assertEquals(subTask, getSubTask.get());
     }
 
     @Test

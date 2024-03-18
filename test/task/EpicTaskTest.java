@@ -1,9 +1,13 @@
+package task;
+
 import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,8 +25,8 @@ class EpicTaskTest {
     void shouldReturnEquals() {
         TaskManager taskManager = Managers.getDefault();
         taskManager.addEpicTask(epicTask);
-        EpicTask getEpicTask = taskManager.getEpicTaskByID(epicTask.getID());
-        assertEquals(epicTask, getEpicTask);
+        Optional<EpicTask> getEpicTask = taskManager.getEpicTaskByID(epicTask.getID());
+        assertEquals(epicTask, getEpicTask.get());
     }
 
     @Test
@@ -33,11 +37,11 @@ class EpicTaskTest {
         epicTask.addSubTask(subTaskTwo.getID());
 
         assertAll("add two SubTask in EpicTask",
-                () -> assertEquals(epicTask.getID(), subTaskOne.getRelatedEpicTaskID()),
-                () -> assertEquals(epicTask.getID(), subTaskTwo.getRelatedEpicTaskID()),
-                () -> assertEquals(2, epicTask.getSubTasksID().size()),
-                () -> assertEquals(subTaskOne.getID(), epicTask.getSubTasksID().get(0)),
-                () -> assertEquals(subTaskTwo.getID(), epicTask.getSubTasksID().get(1)));
+                () -> assertEquals(epicTask.getID(), subTaskOne.getIdRelatedEpicTask()),
+                () -> assertEquals(epicTask.getID(), subTaskTwo.getIdRelatedEpicTask()),
+                () -> assertEquals(2, epicTask.getIdSubTaskList().size()),
+                () -> assertEquals(subTaskOne.getID(), epicTask.getIdSubTaskList().get(0)),
+                () -> assertEquals(subTaskTwo.getID(), epicTask.getIdSubTaskList().get(1)));
     }
 
 

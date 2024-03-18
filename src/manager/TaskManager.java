@@ -6,6 +6,7 @@ import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskManager {
     List<Task> getListTasks();
@@ -16,11 +17,11 @@ public interface TaskManager {
 
     void deleteAllTaskByType(TypeTask typeTask);
 
-    Task getTaskByID(Integer id);
+    Optional<Task> getTaskByID(Integer id);
 
-    EpicTask getEpicTaskByID(Integer id);
+    Optional<EpicTask> getEpicTaskByID(Integer id);
 
-    SubTask getSubTaskByID(Integer id);
+    Optional<SubTask> getSubTaskByID(Integer id);
 
     void addTask(Task task);
 
@@ -33,4 +34,7 @@ public interface TaskManager {
     void deleteTaskByID(Integer id);
 
     List<Task> getHistory();
+
+    List<Task> getPrioritizedTasks();
+
 }

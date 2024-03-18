@@ -10,6 +10,10 @@ import task.relatedTask.SubTask;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.DayOfWeek;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class Main {
@@ -29,6 +33,14 @@ public class Main {
                 epicTaskFirst.getID());
 
         EpicTask epicTaskSecond = new EpicTask("Epic test 2", "Описание Epic test 2");
+
+        subTaskFirst.setStartTime(LocalDateTime.now().with(DayOfWeek.MONDAY)
+                .truncatedTo(ChronoUnit.DAYS).plusMinutes(33));
+        subTaskFirst.setDuration(Duration.ofMinutes(33));
+
+        subTaskSecond.setStartTime(LocalDateTime.now().with(DayOfWeek.MONDAY)
+                .truncatedTo(ChronoUnit.DAYS).plusMinutes(40));
+        subTaskSecond.setDuration(Duration.ofMinutes(33));
 
         tm.addEpicTask(epicTaskFirst);
         tm.addSubTask(subTaskFirst);

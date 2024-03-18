@@ -5,7 +5,7 @@ import task.TypeTask;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
 import util.CSVTaskFormatter;
-import util.ManagerSaveException;
+import exception.ManagerSaveException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -21,8 +21,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private final Path pathFile;
     private static final String DESCRIPTION_TASK_IN_FILE = "id,type,name,status,description,epic,subTask";
     private static final String DESCRIPTION_HISTORY_IN_FILE = "history";
-    private final HashMap<Integer, Task> tasksFromFile = new HashMap<>();
-    private final List<Integer> historyTasksFromFile = new ArrayList<>();
+    private final HashMap<Integer, Task> idToTaskFromFileMap = new HashMap<>();
+    private final List<Integer> idHistoryTasksFromFileList = new ArrayList<>();
 
     public FileBackedTaskManager(String pathFileString) {
         super();
@@ -57,22 +57,22 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task getTaskByID(Integer id) {
-        Task task = super.getTaskByID(id);
+    public Optional<Task> getTaskByID(Integer id) {
+        Optional<Task> task = super.getTaskByID(id);
         save();
         return task;
     }
 
     @Override
-    public EpicTask getEpicTaskByID(Integer id) {
-        EpicTask epicTask = super.getEpicTaskByID(id);
+    public Optional<EpicTask> getEpicTaskByID(Integer id) {
+        Optional<EpicTask> epicTask = super.getEpicTaskByID(id);
         save();
         return epicTask;
     }
 
     @Override
-    public SubTask getSubTaskByID(Integer id) {
-        SubTask subTask = super.getSubTaskByID(id);
+    public Optional<SubTask> getSubTaskByID(Integer id) {
+        Optional<SubTask> subTask = super.getSubTaskByID(id);
         save();
         return subTask;
     }
@@ -177,7 +177,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 if (line.equals(DESCRIPTION_HISTORY_IN_FILE)) {
                     line = reader.readLine();
 
-                    historyTasksFromFile.addAll(Arrays.stream(line.split(","))
+                    idHistoryTasksFromFileList.addAll(Arrays.stream(line.split(","))
                             .map(Integer::valueOf).toList().reversed());
 
                     return;
@@ -188,7 +188,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 }
 
                 Task task = CSVTaskFormatter.stringToTask(line);
-                tasksFromFile.put(task.getID(), task);
+                idToTaskFromFileMap.put(task.getID(), task);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -197,11 +197,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private void loadTasksInTaskManager() {
-        if (tasksFromFile.isEmpty()) {
+        if (idToTaskFromFileMap.isEmpty()) {
             return;
         }
 
-        Supplier<Stream<Task>> streamTask = () -> tasksFromFile.values().stream();
+        Supplier<Stream<Task>> streamTask = () -> idToTaskFromFileMap.values().stream();
 
         streamTask.get().filter(task -> task.getTypeTask() == TypeTask.TASK).forEach(super::addTask);
         streamTask.get().filter(task -> task.getTypeTask() == TypeTask.EPIC).map(EpicTask.class::cast)
@@ -211,12 +211,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private void loadHistoryInTaskManager() {
-        if (historyTasksFromFile.isEmpty()) {
+        if (idHistoryTasksFromFileList.isEmpty()) {
             return;
         }
 
         HistoryManager historyManager = getHistoryManager();
-
-        historyTasksFromFile.forEach(taskId -> historyManager.add(tasksFromFile.get(taskId)));
+        idHistoryTasksFromFileList.forEach(taskId -> historyManager.add(idToTaskFromFileMap.get(taskId)));
     }
 }
