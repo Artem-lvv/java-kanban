@@ -1,8 +1,5 @@
 package manager;
 
-import manager.HistoryManager;
-import manager.Managers;
-import manager.TaskManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -12,7 +9,7 @@ class ManagersTest {
 
     @Test
     void initializationTaskManager() {
-        TaskManager taskManager = Managers.getDefault();
+        TaskManager taskManager = Managers.newInMemoryTaskManager();
         assertAll("Checking initialization of TaskManager fields",
                 () -> assertEquals(0, taskManager.getListTasks().size()),
                 () -> assertEquals(0, taskManager.getListEpicTasks().size()),
@@ -22,7 +19,7 @@ class ManagersTest {
 
     @Test
     void initializationHistoryManager() {
-        HistoryManager hm = Managers.getDefaultHistory();
+        HistoryManager hm = Managers.newDefaultHistory();
         assertEquals(0, hm.getHistory().size());
     }
 }
