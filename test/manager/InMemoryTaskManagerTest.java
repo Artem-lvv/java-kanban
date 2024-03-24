@@ -33,7 +33,7 @@ class InMemoryTaskManagerTest {
 
     @BeforeEach
     void beforeEach() {
-        defaultStartTime = LocalDateTime.of(2024, 1, 1, 0, 0);;
+        defaultStartTime = LocalDateTime.of(2024, 1, 1, 0, 0);
         thirtyMinutes = 30;
         fourtyMinutes = 40;
         durationThirtyThreeMinutes = Duration.ofMinutes(33);
@@ -41,7 +41,7 @@ class InMemoryTaskManagerTest {
         durationTwentyMinutes = Duration.ofMinutes(30);
         durationTenMinutes = Duration.ofMinutes(10);
 
-        taskManager = Managers.getDefault();
+        taskManager = Managers.newInMemoryTaskManager();
         task = new Task("Task test", "Описание Task");
         epicTask = new EpicTask("EpicTask test", "Описание EpicTask test");
         subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicTask.getID());

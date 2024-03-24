@@ -1,13 +1,10 @@
 package manager;
 
-import manager.HistoryManager;
-import manager.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,7 +16,7 @@ class InMemoryHistoryManagerTest {
 
     @BeforeEach
     void beforeEach() {
-        historyManager = Managers.getDefaultHistory();
+        historyManager = Managers.newDefaultHistory();
         tasks = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
