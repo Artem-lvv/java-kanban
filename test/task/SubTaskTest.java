@@ -4,6 +4,7 @@ import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import task.TaskStatus;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
 
@@ -24,7 +25,7 @@ class SubTaskTest {
 
     @Test
     void shouldReturnEquals() {
-        TaskManager taskManager = Managers.newInMemoryTaskManager();
+        TaskManager taskManager = Managers.getDefault();
         taskManager.addEpicTask(epicTask);
         taskManager.addSubTask(subTask);
         Optional<SubTask> getSubTask = taskManager.getSubTaskByID(subTask.getID());

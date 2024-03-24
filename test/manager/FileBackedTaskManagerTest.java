@@ -1,5 +1,7 @@
 package manager;
 
+import manager.Managers;
+import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Task;
@@ -16,42 +18,26 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTaskManagerTest {
+
     private TaskManager taskManager;
     private Task task;
     private EpicTask epicTask;
     private SubTask subTaskOne;
     private SubTask subTaskTwo;
-    private Path pathFile;
-    private String fileData;
+    Path pathFile;
+    String fileData;
 
     @BeforeEach
     void beforeEach() throws IOException {
-        LocalDateTime timeNowDefault = LocalDateTime.of(2024, 1, 1, 0, 0);
+
+        LocalDateTime timeNowDefault = LocalDateTime.now();
         Duration durationDefault = Duration.ofMinutes(30);
-
-        LocalDateTime startTimeSubTaskOne = timeNowDefault.plus(durationDefault);
-        LocalDateTime startTimeSubTaskTwo = timeNowDefault.plus(durationDefault).plus(durationDefault);
-
-        String defaultTimeStringTask = String.format("%s,%s,%d",
-                timeNowDefault.toString(),
-                timeNowDefault.plus(durationDefault).toString(),
-                durationDefault.toMinutes());
-        String defaultTimeStringSubTaskOne = String.format("%s,%s,%d",
-                startTimeSubTaskOne.toString(),
-                startTimeSubTaskOne.plus(durationDefault).toString(),
-                durationDefault.toMinutes());
-        String defaultTimeStringSubTaskTwo = String.format("%s,%s,%d",
-                startTimeSubTaskTwo.toString(),
-                startTimeSubTaskTwo.plus(durationDefault).toString(),
-                durationDefault.toMinutes());
-        String defaultTimeStringEpicOne = String.format("%s,%s,%d",
-                startTimeSubTaskOne.toString(),
-                startTimeSubTaskTwo.plus(durationDefault).toString(),
-                60);
+        String defaultTimeString = String.format("%s,%s,%d", timeNowDefault.toString(),
+                timeNowDefault.plus(durationDefault).toString(), durationDefault.toMinutes());
 
         pathFile = Files.createTempFile("TestFile", "Tasks.csv");
 
-        taskManager = Managers.newFileBackedTaskManager(pathFile.toString());
+        taskManager = Managers.getFileBackedTaskManager(pathFile.toString());
 
         task = new Task("Task test", "Описание Task");
         task.setId(1);
@@ -62,11 +48,11 @@ class FileBackedTaskManagerTest {
         epicTask.setId(2);
         subTaskOne = new SubTask("SubTask test 1", "Описание SubTask test 1", epicTask.getID());
         subTaskOne.setId(3);
-        subTaskOne.setStartTime(startTimeSubTaskOne);
+        subTaskOne.setStartTime(timeNowDefault);
         subTaskOne.setDuration(durationDefault);
         subTaskTwo = new SubTask("SubTask test 2", "Описание SubTask test 2", epicTask.getID());
         subTaskTwo.setId(4);
-        subTaskTwo.setStartTime(startTimeSubTaskTwo);
+        subTaskTwo.setStartTime(timeNowDefault);
         subTaskTwo.setDuration(durationDefault);
 
         taskManager.addEpicTask(epicTask);
@@ -83,13 +69,13 @@ class FileBackedTaskManagerTest {
 
         fileData = "id,type,name,status,description,epic,subTask\n" +
                 "1,TASK,Task test,NEW,Описание Task,null,null,"
-                + defaultTimeStringTask + "\n"
+                + defaultTimeString + "\n"
                 + "2,EPIC,EpicTask test,NEW,Описание EpicTask test,null,3-4,"
-                + defaultTimeStringEpicOne + "\n"
+                + defaultTimeString + "\n"
                 + "3,SUBTASK,SubTask test 1,NEW,Описание SubTask test 1,2,null,"
-                + defaultTimeStringSubTaskOne + "\n"
+                + defaultTimeString + "\n"
                 + "4,SUBTASK,SubTask test 2,NEW,Описание SubTask test 2,2,null,"
-                + defaultTimeStringSubTaskTwo + "\n"
+                + defaultTimeString + "\n"
                 + "history\n" +
                 "4,1,3,2,\n";
     }
@@ -117,7 +103,7 @@ class FileBackedTaskManagerTest {
             writer.write(fileData);
         }
 
-        TaskManager newTaskManager = Managers.newFileBackedTaskManager(pathFile.toString());
+        TaskManager newTaskManager = Managers.getFileBackedTaskManager(pathFile.toString());
 
         assertAll("load Task manager from file",
                 () -> assertEquals(1, newTaskManager.getListTasks().size()),

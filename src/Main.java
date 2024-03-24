@@ -1,13 +1,20 @@
-import api.in.HttpTaskServer;
+import manager.InMemoryHistoryManager;
 import manager.Managers;
 import manager.TaskManager;
 import task.Task;
+import task.TaskStatus;
+import task.TypeTask;
 import task.relatedTask.EpicTask;
 import task.relatedTask.SubTask;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.DayOfWeek;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 public class Main {
 
@@ -16,9 +23,7 @@ public class Main {
 
         Path path = Files.createTempFile("TestFile", "Tasks.csv");
 
-        TaskManager tm = Managers.newFileBackedTaskManager(path.toString());
-        HttpTaskServer httpTaskServer = Managers.newHttpTaskServer(tm);
-        httpTaskServer.start();
+        TaskManager tm = Managers.getFileBackedTaskManager(path.toString());
 
         EpicTask epicTaskFirst = new EpicTask("Epic test 1", "Описание Epic test 1");
 
@@ -29,14 +34,14 @@ public class Main {
 
         EpicTask epicTaskSecond = new EpicTask("Epic test 2", "Описание Epic test 2");
 
-       /* subTaskFirst.setStartTime(LocalDateTime.now().with(DayOfWeek.MONDAY)
+        subTaskFirst.setStartTime(LocalDateTime.now().with(DayOfWeek.MONDAY)
                 .truncatedTo(ChronoUnit.DAYS).plusMinutes(33));
         subTaskFirst.setDuration(Duration.ofMinutes(33));
 
         subTaskSecond.setStartTime(LocalDateTime.now().with(DayOfWeek.MONDAY)
                 .truncatedTo(ChronoUnit.DAYS).plusMinutes(40));
         subTaskSecond.setDuration(Duration.ofMinutes(33));
-*/
+
         tm.addEpicTask(epicTaskFirst);
         tm.addSubTask(subTaskFirst);
         tm.addSubTask(subTaskSecond);

@@ -4,6 +4,8 @@ import manager.Managers;
 import manager.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import task.Task;
+import task.TaskStatus;
 
 import java.util.Optional;
 
@@ -21,7 +23,7 @@ class TaskTest {
 
     @Test
     void shouldReturnEquals() {
-        TaskManager taskManager = Managers.newInMemoryTaskManager();
+        TaskManager taskManager = Managers.getDefault();
         taskManager.addTask(task);
         Optional<Task> taskFromTaskManager = taskManager.getTaskByID(task.getID());
 
