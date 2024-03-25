@@ -23,7 +23,7 @@ class EpicTaskTest {
 
     @Test
     void shouldReturnEquals() {
-        TaskManager taskManager = Managers.getDefault();
+        TaskManager taskManager = Managers.newInMemoryTaskManager();
         taskManager.addEpicTask(epicTask);
         Optional<EpicTask> getEpicTask = taskManager.getEpicTaskByID(epicTask.getID());
         assertEquals(epicTask, getEpicTask.get());
